@@ -1,13 +1,16 @@
 from flask import render_template, request, jsonify
+from flask_cors import cross_origin  # Import cross_origin
 from .gpt import generate_response
 
 from app import app
 
 @app.route('/')
+@cross_origin()  # Enable CORS for this route
 def index():
-    return render_template('index.html')
+    return jsonify(message='Welcome to TextMate!')
 
 @app.route('/process', methods=['POST'])
+@cross_origin()  # Enable CORS for this route
 def process_file():
     try:
         data = request.get_json()
