@@ -18,10 +18,12 @@ def process_file():
 
         # Call the function to generate a response using GPT-3.5
         summarized_text, sentences = generate_response(file_content)
+        data = {
+        'summarized_text': summarized_text,
+        'sentences': sentences,
+        }
 
-        return jsonify({
-            'summarized_text': summarized_text,
-            'sentences': sentences,
-        })
+        return jsonify(data, 200, {'Content-Type': 'application/json; charset=utf-8'})
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500

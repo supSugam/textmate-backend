@@ -1,42 +1,15 @@
-# import openai
-# from .preprocessing import preprocess_text
-# from .analysis import perform_sentiment_analysis
-
-# # Set your OpenAI API key
-# openai.api_key = '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'
-
-
-# def generate_response(file_content, user_query):
-#     try:
-#         # Step 1: Preprocess the text
-#         summarized_text = preprocess_text(file_content)
-
-#         # Step 2: Perform sentiment analysis
-#         sentiment_result = perform_sentiment_analysis(summarized_text)
-
-#         # Step 3: Generate response using GPT-3.5 based on user query and combined features
-#         gpt_prompt = f"File Summary: {summarized_text}\n\nUser Query: {user_query}\n\nSentiment: {sentiment_result}\n\nNow, provide a response:"
-#         response = openai.Completion.create(
-#             engine="text-davinci-002",  # You can choose a different engine if needed
-#             prompt=gpt_prompt,
-#             max_tokens=100,
-#             temperature=0.7,
-#         )
-
-#         generated_response = response['choices'][0]['text'].strip()
-
-#         return generated_response
-
-#     except Exception as e:
-#         raise RuntimeError(f"Error generating response: {str(e)}")
-import openai
+from openai import OpenAI
 from .preprocessing import preprocess_text
 from .analysis import perform_sentiment_analysis
+import os
+import re
 
-# Set your OpenAI API key
-openai.api_key = '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'
+client = OpenAI(
+    # api_key=os.getenv("OPENAI_API_KEY"),
+    api_key="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",  # this is also the default, it can be omitted
+)
 
-def generate_response(file_content, user_query=None):  # Add user_query as an optional argument
+def generate_response(file_content, user_query=None):
     try:
         # Step 1: Preprocess the text
         summarized_text = preprocess_text(file_content)
@@ -49,17 +22,25 @@ def generate_response(file_content, user_query=None):  # Add user_query as an op
         if user_query:
             gpt_prompt += f"\n\nUser Query: {user_query}\n\nSentiment: {sentiment_result}\n\nNow, provide a response:"
 
-        response = openai.Completion.create(
-            engine="text-davinci-002",  # You can choose a different engine if needed
-            prompt=gpt_prompt,
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{
+                "role": "user",
+                "content": gpt_prompt
+            }],
+            temperature=0.9,
             max_tokens=100,
-            temperature=0.7,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0.6,
+            stop=["\n"]
         )
 
-        generated_response = response['choices'][0]['text'].strip()
+        generated_response = response.choices[0].message.content
+        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', generated_response)
 
-        return generated_response
+        # Return a tuple containing both the generated response and the summarized text
+        return generated_response, sentences
 
     except Exception as e:
         raise RuntimeError(f"Error generating response: {str(e)}")
-
