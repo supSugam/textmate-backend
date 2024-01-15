@@ -18,12 +18,7 @@ def summarize_file_contents():
         file_content = data.get('file_content', '')
 
         # Call the function to generate a response using GPT-3.5
-        summarized_text, sentences = generate_summary(file_content)
-        data = {
-        'summarized_text': summarized_text,
-        'sentences': sentences,
-        }
-
+        data = generate_summary(file_content)
         return jsonify(data, 200, {'Content-Type': 'application/json; charset=utf-8'})
 
     except Exception as e:
