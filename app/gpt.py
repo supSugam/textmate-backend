@@ -2,7 +2,6 @@ from openai import OpenAI
 from .preprocessing import preprocess_text
 from .analysis import perform_sentiment_analysis
 import os
-import re
 from .helpers import is_json
 
 client = OpenAI(

@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify
+from flask import request, jsonify
 from flask_cors import cross_origin  # Import cross_origin
 from .gpt import generate_summary
 from .gpt import respond_user_query
