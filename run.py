@@ -1,4 +1,6 @@
 from dotenv import load_dotenv
+import nltk
+nltk.download('punkt')
 
 load_dotenv()
 

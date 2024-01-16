@@ -3,7 +3,12 @@ import webbrowser
 
 def install_requirements():
     try:
+        # Install general requirements
         subprocess.run(["pip", "install", "-r", "requirements.txt"], check=True)
+        
+        # Download spaCy model
+        subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"], check=True)
+        
         print("Requirements installed successfully.")
     except subprocess.CalledProcessError:
         print("Error installing requirements.")
